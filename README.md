@@ -17,17 +17,16 @@ A premium black/red graphic designer portfolio built with Next.js, TypeScript, P
 npm install
 npx prisma generate
 npx prisma db push
-npm run db:seed
+ADMIN_SEED_PASSWORD="choose-a-strong-password" npm run db:seed
 npm run dev
 ```
 
-Demo admin:
-- Email: admin@lordzicco.com
-- Password: ChangeMeImmediately!2026
+Demo admin email:
+- `admin@lordzicco.com`
 
-Change the demo password before production.
+The admin password is supplied through `ADMIN_SEED_PASSWORD` during seeding and is not stored in the repository.
 
 ## Deployment
-The app is suitable for a Render Web Service with a Render PostgreSQL database. Set DATABASE_URL, AUTH_SECRET and NEXT_PUBLIC_SITE_URL. For production deployments, prefer `npx prisma migrate deploy` after creating migrations.
+The app is suitable for a Render Web Service with a Render PostgreSQL database. Set `DATABASE_URL`, `AUTH_SECRET`, `NEXT_PUBLIC_SITE_URL`, and `ADMIN_SEED_PASSWORD`. For production deployments, prefer `npx prisma migrate deploy` after creating migrations.
 
 This repository is the portfolio scaffold; some admin CRUD and media-upload functionality still require completion/configuration for production.
