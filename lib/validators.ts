@@ -1,0 +1,4 @@
+import { z } from "zod";
+export const messageSchema = z.object({name:z.string().min(2).max(80),email:z.email(),subject:z.string().min(2).max(160),message:z.string().min(5).max(5000)});
+export const loginSchema = z.object({email:z.email(),password:z.string().min(8).max(200)});
+export const projectSchema = z.object({title:z.string().min(2).max(160),slug:z.string().min(2).max(180),description:z.string().min(2).max(5000),process:z.string().max(5000).optional(),tools:z.string().max(500).optional(),client:z.string().max(200).optional(),imageUrl:z.string().min(1).max(1000),categoryId:z.string().min(1),published:z.boolean().default(false),featured:z.boolean().default(false)});
