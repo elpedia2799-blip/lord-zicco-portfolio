@@ -1,5 +1,35 @@
 import { prisma } from "@/lib/prisma";
+
 export default async function AdminDashboard() {
- const [projects,services,messages,views] = await Promise.all([prisma.project.count(),prisma.service.count(),prisma.message.count(),prisma.analyticsEvent.count({where:{type:"PROJECT_VIEW"}})]);
- const recent = await prisma.message.findMany({orderBy:{createdAt:"desc"},take:5});
- return <div className="mx-auto max-w-7xl"><h1 className="text-3xl font-bold">Overview</h1><p className="mt-1 text-white/40">Manage your portfolio and content.</p><div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{[["Total Projects",projects],["Total Services",services],["Total Messages",messages],["Portfolio Views",views]].map(([a,b])=><div className="rounded-2xl border border-white/10 bg-[#0a0a0a] p-6" key={a}><p className="text-sm text-white/40">{a}</p><b className="mt-3 block text-4xl">{b}</b></div>)}</div><div className="mt-8 rounded-2xl border border-white/10 bg-[#0a0a0a] p-6"><h2 className="font-bold">Recent messages</h2><div className="mt-5 overflow-x-auto"><table className="w-full text-left text-sm"><thead className="text-white/35"><tr><th className="p-3">Name</th><th className="p-3">Email</th><th className="p-3">Subject</th><th className="p-3">Status</th></tr></thead><tbody>{recent.map(m=><tr className="border-t border-white/5" key={m.id}><td className="p-3">{m.name}</td><td className="p-3">{m.email}</td><td className="p-3">{m.subject}</td><td className="p-3 text-red">{m.status}</td></tr>)}</tbody></table></div></div></div>
+  const [projects, services, messages, views] = await Promise.all([
+    prisma.project.count(),
+    prisma.service.count(),
+    prisma.message.count(),
+    prisma.analyticsEvent.count({ where: { type: "PROJECT_VIEW" } }),
+  ]);
+  const recent = await prisma.message.findMany({ orderBy: { createdAt: "desc" }, take: 5 });
+
+  return (
+    <div className="mx-auto max-w-7xl">
+      <h1 className="text-3xl font-bold">Overview</h1>
+      <p className="mt-1 text-white/40">Manage your portfolio and content.</p>
+      <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {[["Total Projects", projects], ["Total Services", services], ["Total Messages", messages], ["Portfolio Views", views]].map(([label, value]) => (
+          <div className="rounded-2xl border border-white/10 bg-[#0a0a0a] p-6" key={String(label)}>
+            <p className="text-sm text-white/40">{label}</p>
+            <b className="mt-3 block text-4xl">{value}</b>
+          </div>
+        ))}
+      </div>
+      <div className="mt-8 rounded-2xl border border-white/10 bg-[#0a0a0a] p-6">
+        <h2 className="font-bold">Recent messages</h2>
+        <div className="mt-5 overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="text-white/35"><tr><th className="p-3">Name</th><th className="p-3">Email</th><th className="p-3">Subject</th><th className="p-3">Status</th></tr></thead>
+            <tbody>{recent.map((m) => <tr className="border-t border-white/5" key={m.id}><td className="p-3">{m.name}</td><td className="p-3">{m.email}</td><td className="p-3">{m.subject}</td><td className="p-3 text-red">{m.status}</td></tr>)}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
