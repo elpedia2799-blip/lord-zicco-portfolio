@@ -1,0 +1,13 @@
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { ArrowLeft } from "lucide-react";
+
+export default async function ProjectPage({ params }: { params: Promise<{slug:string}> }) {
+  const {slug} = await params;
+  const p = await prisma.project.findUnique({ where: { slug }, include: { category: true, images: { orderBy: { sortOrder: "asc" } } } });
+  if (!p || !p.published) notFound();
+  await prisma.project.update({ where: { id: p.id }, data: { views: { increment: 1 } } });
+  const related = await prisma.project.findMany({ where: { published: true, categoryId: p.categoryId, id: { not: p.id } }, take: 3 });
+  return <main className="pt-32"><div className="container pb-20"><Link href="/#portfolio" className="mb-8 inline-flex items-center gap-2 text-sm text-white/50 hover:text-white"><ArrowLeft size={16}/> Back to portfolio</Link><div className="grid gap-12 lg:grid-cols-[1.2fr_.8fr]"><div><img src={p.imageUrl} alt={p.title} className="w-full rounded-[30px] border border-white/10"/>{p.images.length>0 && <div className="mt-4 grid grid-cols-2 gap-4">{p.images.map(i=><img key={i.id} src={i.url} alt={i.alt || p.title} className="rounded-2xl border border-white/10"/>)}</div>}</div><div className="lg:sticky lg:top-28 lg:self-start"><div className="text-xs uppercase tracking-[.25em] text-red">{p.category.name}</div><h1 className="display mt-4 text-6xl sm:text-8xl">{p.title}</h1><p className="mt-7 text-lg leading-8 text-white/55">{p.description}</p><div className="mt-8 space-y-4 border-t border-white/10 pt-6 text-sm"><p><span className="text-white/35">Tools</span><br/>{p.tools || "—"}</p><p><span className="text-white/35">Client</span><br/>{p.client || "—"}</p><p><span className="text-white/35">Date</span><br/>{p.projectDate.toLocaleDateString()}</p></div></div></div>{p.process && <section className="mt-24 max-w-3xl"><p className="text-xs font-bold tracking-[.25em] text-red">DESIGN PROCESS</p><h2 className="display mt-3 text-5xl">From brief to final.</h2><p className="mt-7 whitespace-pre-line text-lg leading-8 text-white/55">{p.process}</p></section>}{related.length>0 && <section className="mt-24"><h2 className="display text-4xl">Related Projects</h2><div className="mt-7 grid gap-4 md:grid-cols-3">{related.map(x=><Link className="card" key={x.id} href={`/projects/${x.slug}`}><img src={x.imageUrl} alt={x.title} className="aspect-[4/3] w-full object-cover"/><div className="p-5 font-bold">{x.title}</div></Link>)}</div></section>}</div></main>
+}
