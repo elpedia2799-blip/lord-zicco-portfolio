@@ -1,11 +1,125 @@
-generator client { provider = "prisma-client-js" }
-datasource db { provider = "postgresql" url = env("DATABASE_URL") }
-model User { id String @id @default(cuid()) email String @unique passwordHash String name String @default("Lord Zicco") role String @default("ADMIN") createdAt DateTime @default(now()) updatedAt DateTime @updatedAt }
-model Category { id String @id @default(cuid()) name String @unique projects Project[] }
-model Project { id String @id @default(cuid()) slug String @unique title String description String process String? tools String? client String? imageUrl String published Boolean @default(false) featured Boolean @default(false) views Int @default(0) projectDate DateTime @default(now()) categoryId String category Category @relation(fields:[categoryId],references:[id],onDelete:Restrict) images ProjectImage[] createdAt DateTime @default(now()) updatedAt DateTime @updatedAt @@index([categoryId]) @@index([published,featured]) }
-model ProjectImage { id String @id @default(cuid()) url String alt String? sortOrder Int @default(0) projectId String project Project @relation(fields:[projectId],references:[id],onDelete:Cascade) @@index([projectId,sortOrder]) }
-model Service { id String @id @default(cuid()) name String description String icon String @default("Sparkles") enabled Boolean @default(true) sortOrder Int @default(0) createdAt DateTime @default(now()) updatedAt DateTime @updatedAt }
-model Message { id String @id @default(cuid()) name String email String subject String message String status String @default("NEW") createdAt DateTime @default(now()) @@index([status,createdAt]) }
-model Media { id String @id @default(cuid()) url String filename String alt String? createdAt DateTime @default(now()) }
-model SiteSettings { id String @id @default("main") siteTitle String @default("Lord Zicco — Graphic Designer") seoDescription String @default("Lord Zicco is a graphic designer creating bold visual identities, branding, posters, apparel, social media designs and digital experiences.") heroHeading String @default("CREATIVE DESIGN. BOLD IDEAS.") heroDescription String @default("I’m Lord Zicco, a graphic designer focused on creating modern, bold and memorable visual identities.") heroImage String @default("/placeholders/hero.svg") aboutBio String @default("I create visual identities and digital experiences that turn ideas into memorable brands.") aboutImage String @default("/placeholders/about.svg") experience String @default("2+") projectsCount String @default("100+") clientsCount String @default("50+") quote String @default("Great design isn’t just what it looks like, it’s how it makes you feel.") email String @default("hello@lordzicco.com") phone String @default("+233 00 000 0000") location String @default("Accra, Ghana") instagram String @default("#") xUrl String @default("#") behance String @default("#") youtube String @default("#") copyright String @default("© 2026 Lord Zicco. All rights reserved.") footerText String @default("Design / Create / Inspire") updatedAt DateTime @updatedAt }
-model AnalyticsEvent { id String @id @default(cuid()) type String projectId String? path String? createdAt DateTime @default(now()) @@index([type,createdAt]) @@index([projectId,createdAt]) }
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String   @default("Lord Zicco")
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  projects Project[]
+}
+
+model Project {
+  id          String         @id @default(cuid())
+  slug        String         @unique
+  title       String
+  description String
+  process     String?
+  tools       String?
+  client      String?
+  imageUrl    String
+  published   Boolean        @default(false)
+  featured    Boolean        @default(false)
+  views       Int            @default(0)
+  projectDate DateTime       @default(now())
+  categoryId  String
+  category    Category       @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  images      ProjectImage[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([categoryId])
+  @@index([published, featured])
+}
+
+model ProjectImage {
+  id        String  @id @default(cuid())
+  url       String
+  alt       String?
+  sortOrder Int     @default(0)
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, sortOrder])
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  icon        String   @default("Sparkles")
+  enabled     Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  status    String   @default("NEW")
+  createdAt DateTime @default(now())
+
+  @@index([status, createdAt])
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  url       String
+  filename  String
+  alt       String?
+  createdAt DateTime @default(now())
+}
+
+model SiteSettings {
+  id             String   @id @default("main")
+  siteTitle      String   @default("Lord Zicco — Graphic Designer")
+  seoDescription String   @default("Lord Zicco is a graphic designer creating bold visual identities, branding, posters, apparel, social media designs and digital experiences.")
+  heroHeading    String   @default("CREATIVE DESIGN. BOLD IDEAS.")
+  heroDescription String  @default("I’m Lord Zicco, a graphic designer focused on creating modern, bold and memorable visual identities.")
+  heroImage      String   @default("/placeholders/hero.svg")
+  aboutBio       String   @default("I create visual identities and digital experiences that turn ideas into memorable brands.")
+  aboutImage     String   @default("/placeholders/about.svg")
+  experience     String   @default("2+")
+  projectsCount  String   @default("100+")
+  clientsCount   String   @default("50+")
+  quote          String   @default("Great design isn’t just what it looks like, it’s how it makes you feel.")
+  email          String   @default("hello@lordzicco.com")
+  phone          String   @default("+233 00 000 0000")
+  location       String   @default("Accra, Ghana")
+  instagram      String   @default("#")
+  xUrl           String   @default("#")
+  behance        String   @default("#")
+  youtube        String   @default("#")
+  copyright      String   @default("© 2026 Lord Zicco. All rights reserved.")
+  footerText     String   @default("Design / Create / Inspire")
+  updatedAt      DateTime @updatedAt
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  type      String
+  projectId String?
+  path      String?
+  createdAt DateTime @default(now())
+
+  @@index([type, createdAt])
+  @@index([projectId, createdAt])
+}
